@@ -1,5 +1,11 @@
-import FormCadastroProduto from "./formulario/FormCadastroProduto";
+import FormCadastroProduto from "../components/formulario/FormCadastroProduto";
+import Page from "../components/Page";
 
 export default function RegisterProductPage() {
-  return <FormCadastroProduto />;
+  return (
+    <div>
+      <Page titulo="Sistema de Cadastro de produtos" />
+      <FormCadastroProduto />
+    </div>
+  );
 }
