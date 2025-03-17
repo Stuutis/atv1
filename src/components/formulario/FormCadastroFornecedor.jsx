@@ -1,18 +1,27 @@
 import { Form, Row, Col, Button } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function FormCadastroFornecedor() {
+export default function FormCadastroFornecedor(props) {
   const [isValid, setIsValid] = useState(false);
-  const [nomeFornecedor, setNomeFornecedor] = useState("");
-  const [cnpjFornecedor, setCnpjFornecedor] = useState("");
-  const [emailFornecedor, setEmailFornecedor] = useState("");
-  const [telefoneFornecedor, setTelefoneFornecedor] = useState("");
-  const [enderecoFornecedor, setEnderecoFornecedor] = useState("");
-  const [bairroFornecedor, setBairroFornecedor] = useState("");
-  const [cidadeFornecedor, setCidadeFornecedor] = useState("");
-  const [estadoFornecedor, setEstadoFornecedor] = useState("");
-  const [cepFornecedor, setCepFornecedor] = useState("");
-  const [observacoesFornecedor, setObservacoesFornecedor] = useState("");
+  const [supplier, setSupplier] = useState({
+    nomeFornecedor: "",
+    cnpjFornecedor: "",
+    emailFornecedor: "",
+    telefoneFornecedor: "",
+    enderecoFornecedor: "",
+    bairroFornecedor: "",
+    cidadeFornecedor: "",
+    estadoFornecedor: "",
+    cepFornecedor: "",
+    observacoesFornecedor: "",
+  });
+
+  function handleChange(e) {
+    setSupplier({
+      ...supplier,
+      [e.target.name]: e.target.value,
+    });
+  }
 
   function handleSubmit(e) {
     const form = e.currentTarget;
@@ -21,19 +30,40 @@ export default function FormCadastroFornecedor() {
     }
     e.preventDefault();
     e.stopPropagation();
-    console.log(
-      nomeFornecedor,
-      cnpjFornecedor,
-      emailFornecedor,
-      telefoneFornecedor,
-      enderecoFornecedor,
-      bairroFornecedor,
-      cidadeFornecedor,
-      estadoFornecedor,
-      cepFornecedor,
-      observacoesFornecedor
-    );
+    console.log(supplier);
+
+    if (props.supplierToEdit) {
+      const updatedList = props.supplierList.map((fornecedor) =>
+        fornecedor.cnpjFornecedor === supplier.cnpjFornecedor
+          ? supplier
+          : fornecedor
+      );
+      props.setSupplierList(updatedList);
+    } else {
+      props.setSupplierList([...props.supplierList, supplier]);
+    }
+
+    props.setIsShowTable(false);
   }
+
+  useEffect(() => {
+    if (props.supplierToEdit) {
+      setSupplier(props.supplierToEdit);
+    } else {
+      setSupplier({
+        nomeFornecedor: "",
+        cnpjFornecedor: "",
+        emailFornecedor: "",
+        telefoneFornecedor: "",
+        enderecoFornecedor: "",
+        bairroFornecedor: "",
+        cidadeFornecedor: "",
+        estadoFornecedor: "",
+        cepFornecedor: "",
+        observacoesFornecedor: "",
+      });
+    }
+  }, [props.supplierToEdit]);
 
   return (
     <>
@@ -53,8 +83,9 @@ export default function FormCadastroFornecedor() {
               required
               type="text"
               placeholder="Digite o nome do fornecedor"
-              value={nomeFornecedor}
-              onChange={(e) => setNomeFornecedor(e.target.value)}
+              name="nomeFornecedor"
+              value={supplier.nomeFornecedor}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite o nome do fornecedor.
@@ -67,8 +98,9 @@ export default function FormCadastroFornecedor() {
               required
               type="text"
               placeholder="Digite o CNPJ"
-              value={cnpjFornecedor}
-              onChange={(e) => setCnpjFornecedor(e.target.value)}
+              name="cnpjFornecedor"
+              value={supplier.cnpjFornecedor}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite o CNPJ do fornecedor.
@@ -80,8 +112,9 @@ export default function FormCadastroFornecedor() {
             <Form.Control
               type="email"
               placeholder="Digite o Email"
-              value={emailFornecedor}
-              onChange={(e) => setEmailFornecedor(e.target.value)}
+              name="emailFornecedor"
+              value={supplier.emailFornecedor}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite um email válido.
@@ -95,8 +128,9 @@ export default function FormCadastroFornecedor() {
             <Form.Control
               type="text"
               placeholder="Digite o Telefone"
-              value={telefoneFornecedor}
-              onChange={(e) => setTelefoneFornecedor(e.target.value)}
+              name="telefoneFornecedor"
+              value={supplier.telefoneFornecedor}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite um telefone válido.
@@ -108,8 +142,9 @@ export default function FormCadastroFornecedor() {
             <Form.Control
               type="text"
               placeholder="Digite o Endereço"
-              value={enderecoFornecedor}
-              onChange={(e) => setEnderecoFornecedor(e.target.value)}
+              name="enderecoFornecedor"
+              value={supplier.enderecoFornecedor}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite o endereço.
@@ -121,8 +156,9 @@ export default function FormCadastroFornecedor() {
             <Form.Control
               type="text"
               placeholder="Digite o Bairro"
-              value={bairroFornecedor}
-              onChange={(e) => setBairroFornecedor(e.target.value)}
+              name="bairroFornecedor"
+              value={supplier.bairroFornecedor}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite o bairro.
@@ -136,8 +172,9 @@ export default function FormCadastroFornecedor() {
             <Form.Control
               type="text"
               placeholder="Digite a Cidade"
-              value={cidadeFornecedor}
-              onChange={(e) => setCidadeFornecedor(e.target.value)}
+              name="cidadeFornecedor"
+              value={supplier.cidadeFornecedor}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite a cidade.
@@ -149,8 +186,9 @@ export default function FormCadastroFornecedor() {
             <Form.Control
               type="text"
               placeholder="Digite o Estado"
-              value={estadoFornecedor}
-              onChange={(e) => setEstadoFornecedor(e.target.value)}
+              name="estadoFornecedor"
+              value={supplier.estadoFornecedor}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite o estado.
@@ -162,8 +200,9 @@ export default function FormCadastroFornecedor() {
             <Form.Control
               type="text"
               placeholder="Digite o CEP"
-              value={cepFornecedor}
-              onChange={(e) => setCepFornecedor(e.target.value)}
+              name="cepFornecedor"
+              value={supplier.cepFornecedor}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite o CEP.
@@ -178,18 +217,25 @@ export default function FormCadastroFornecedor() {
               as="textarea"
               rows={3}
               placeholder="Digite alguma observação sobre o fornecedor (opcional)"
-              value={observacoesFornecedor}
-              onChange={(e) => setObservacoesFornecedor(e.target.value)}
+              name="observacoesFornecedor"
+              value={supplier.observacoesFornecedor}
+              onChange={handleChange}
             />
           </Form.Group>
         </Row>
-
         <div className="d-flex gap-2">
           <Button variant="success" type="submit">
-            Cadastrar Fornecedor
+            {props.supplierToEdit
+              ? "Atualizar Fornecedor"
+              : "Cadastrar Fornecedor"}
           </Button>
-          <Button variant="warning" type="reset">
-            Limpar
+          <Button
+            variant="warning"
+            onClick={() => {
+              props.setIsShowTable(false);
+            }}
+          >
+            Mostrar fornecedores
           </Button>
         </div>
       </Form>

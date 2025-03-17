@@ -1,36 +1,66 @@
 import { Form, Row, Col, Button } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function FormCadastroProduto() {
+export default function FormCadastroProduto(props) {
   const [isValid, setIsValid] = useState(false);
-  const [produto, setProduto] = useState("");
-  const [codigoProduto, setCodigoProduto] = useState("");
-  const [descricaoProduto, setDescricaoProduto] = useState("");
-  const [categoriaProduto, setCategoriaProduto] = useState("");
-  const [marcaProduto, setMarcaProduto] = useState("");
-  const [modeloProduto, setModeloProduto] = useState("");
-  const [estoqueProduto, setEstoqueProduto] = useState("");
-  const [precoCusto, setPrecoCusto] = useState("");
-  const [precoVenda, setPrecoVenda] = useState("");
+  const [produto, setProduto] = useState({
+    produto: "",
+    codigoProduto: "",
+    descricaoProduto: "",
+    categoriaProduto: "",
+    marcaProduto: "",
+    modeloProduto: "",
+    estoqueProduto: "",
+    precoCusto: "",
+    precoVenda: "",
+  });
+
+  useEffect(() => {
+    if (props.productToEdit) {
+      setProduto(props.productToEdit);
+    } else {
+      setProduto({
+        produto: "",
+        codigoProduto: "",
+        descricaoProduto: "",
+        categoriaProduto: "",
+        marcaProduto: "",
+        modeloProduto: "",
+        estoqueProduto: "",
+        precoCusto: "",
+        precoVenda: "",
+      });
+    }
+  }, [props.productToEdit]);
+
+  function handleChange(e) {
+    setProduto({
+      ...produto,
+      [e.target.name]: e.target.value,
+    });
+  }
 
   function handleSubmit(e) {
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
       setIsValid(true);
+      e.preventDefault();
+      e.stopPropagation();
+      return;
     }
+
     e.preventDefault();
     e.stopPropagation();
-    console.log(
-      produto,
-      codigoProduto,
-      descricaoProduto,
-      categoriaProduto,
-      marcaProduto,
-      modeloProduto,
-      estoqueProduto,
-      precoCusto,
-      precoVenda
-    );
+
+    if (props.productToEdit) {
+      const updatedList = props.productList.map((prod) =>
+        prod.codigoProduto === produto.codigoProduto ? produto : prod
+      );
+      props.setProductList(updatedList);
+    } else {
+      props.setProductList([...props.productList, produto]);
+    }
+    props.setShowTable(false);
   }
 
   return (
@@ -44,6 +74,7 @@ export default function FormCadastroProduto() {
         onSubmit={handleSubmit}
         className="bg-light m-4 p-5 rounded "
       >
+        {/* ... (campos do formulário) */}
         <Row className="mb-3">
           <Form.Group as={Col} md="4">
             <Form.Label>Produto</Form.Label>
@@ -53,8 +84,8 @@ export default function FormCadastroProduto() {
               name="produto"
               type="text"
               placeholder="Digite o Produto"
-              value={produto}
-              onChange={(e) => setProduto(e.target.value)}
+              value={produto.produto}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite o nome do produto.
@@ -69,8 +100,8 @@ export default function FormCadastroProduto() {
               name="codigoProduto"
               type="text"
               placeholder="Código do Produto"
-              value={codigoProduto}
-              onChange={(e) => setCodigoProduto(e.target.value)}
+              value={produto.codigoProduto}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite o código do produto.
@@ -85,8 +116,8 @@ export default function FormCadastroProduto() {
               name="descricaoProduto"
               type="text"
               placeholder="Descrição do Produto"
-              value={descricaoProduto}
-              onChange={(e) => setDescricaoProduto(e.target.value)}
+              value={produto.descricaoProduto}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite a descrição do produto.
@@ -99,8 +130,9 @@ export default function FormCadastroProduto() {
             <Form.Select
               required
               aria-label="Default select example"
-              value={categoriaProduto}
-              onChange={(e) => setCategoriaProduto(e.target.value)}
+              name="categoriaProduto"
+              value={produto.categoriaProduto}
+              onChange={handleChange}
             >
               <option disabled value="">
                 Selecione a categoria
@@ -123,8 +155,8 @@ export default function FormCadastroProduto() {
               name="marcaProduto"
               type="text"
               placeholder="Digite a marca do produto"
-              value={marcaProduto}
-              onChange={(e) => setMarcaProduto(e.target.value)}
+              value={produto.marcaProduto}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, informe a marca do produto.
@@ -139,15 +171,14 @@ export default function FormCadastroProduto() {
               name="modeloProduto"
               type="text"
               placeholder="Digite o modelo do produto"
-              value={modeloProduto}
-              onChange={(e) => setModeloProduto(e.target.value)}
+              value={produto.modeloProduto}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, informe o modelo do produto.
             </Form.Control.Feedback>
           </Form.Group>
         </Row>
-
         <Row className="mb-3">
           <Form.Group as={Col} md="4">
             <Form.Label>Estoque</Form.Label>
@@ -157,8 +188,8 @@ export default function FormCadastroProduto() {
               name="estoqueProduto"
               type="text"
               placeholder="Digite a quantidade em estoque"
-              value={estoqueProduto}
-              onChange={(e) => setEstoqueProduto(e.target.value)}
+              value={produto.estoqueProduto}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, informe a quantidade em estoque do produto.
@@ -173,8 +204,8 @@ export default function FormCadastroProduto() {
               name="precoCusto"
               type="text"
               placeholder="Preço de custo do produto"
-              value={precoCusto}
-              onChange={(e) => setPrecoCusto(e.target.value)}
+              value={produto.precoCusto}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, informe o preço de custo do produto.
@@ -189,8 +220,8 @@ export default function FormCadastroProduto() {
               name="precoVenda"
               type="text"
               placeholder="Preço de venda do produto"
-              value={precoVenda}
-              onChange={(e) => setPrecoVenda(e.target.value)}
+              value={produto.precoVenda}
+              onChange={handleChange}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, informe o preço de venda do produto.
@@ -199,10 +230,15 @@ export default function FormCadastroProduto() {
         </Row>
         <div className="d-flex gap-2">
           <Button variant="success" type="submit">
-            Cadastrar
+            {props.productToEdit ? "Atualizar Produto" : "Cadastrar Produto"}
           </Button>
-          <Button variant="warning" type="reset">
-            Limpar
+          <Button
+            variant="warning"
+            onClick={() => {
+              props.setShowTable(false);
+            }}
+          >
+            Mostrar produtos
           </Button>
         </div>
       </Form>
